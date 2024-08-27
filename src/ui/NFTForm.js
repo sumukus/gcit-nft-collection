@@ -2,12 +2,32 @@ import { useState } from "react";
 
 import "../css/NFTForm.css";
 
-export default function NFTForm() {
+export default function NFTForm({ gcitNFTAPI, setIsLoading }) {
   const [receipient, setReceipient] = useState("");
   const [tokenURI, setTokenURI] = useState("");
 
+  //handler for mint button inside NFTForm
+  async function hadleNFTForm() {
+    setIsLoading(true);
+    try {
+      const tx = await gcitNFTAPI.addNFTItem(receipient, tokenURI);
+      await tx.wait();
+      if (tx.hash) {
+        alert("Successfully mint Gcit NFT");
+      } else {
+        alert("Failed to mint Gcit NFT");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Failed to mint NFT");
+    }
+    setReceipient("");
+    setTokenURI("");
+    setIsLoading(false);
+  }
+
   return (
-    <form>
+    <form onSubmit={hadleNFTForm}>
       <label>Enter Recepient Address:</label>
       <input
         type="text"
